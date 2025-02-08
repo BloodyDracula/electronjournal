@@ -17,13 +17,22 @@
           />
         </div>
         <div class="mb-3">
+          <label for="studentUserId" class="form-label">User ID:</label>
+          <input
+              type="number"
+              id="studentUserId"
+              v-model="newStudent.userId"
+              class="form-control"
+              required
+          />
+        </div>
+        <div class="mb-3">
           <label for="studentGroupId" class="form-label">Group ID:</label>
           <input
               type="number"
               id="studentGroupId"
               v-model="newStudent.groupId"
               class="form-control"
-              required
           />
         </div>
         <button type="submit" class="btn btn-primary">Create Student</button>
@@ -36,6 +45,7 @@
       <tr>
         <th>ID</th>
         <th>Name</th>
+        <th>User ID</th>
         <th>Group ID</th>
         <th v-if="isAdmin">Actions</th>
       </tr>
@@ -49,6 +59,15 @@
               v-else
               type="text"
               v-model="student.editedName"
+              class="form-control"
+          />
+        </td>
+        <td>
+          <span v-if="!student.isEditing">{{ student.userId }}</span>
+          <input
+              v-else
+              type="number"
+              v-model="student.editedUserId"
               class="form-control"
           />
         </td>
@@ -98,6 +117,7 @@ export default {
       students: [], // Список студентов
       newStudent: {
         name: '',
+        userId: null,
         groupId: null,
       },
       isAdmin: false, // Проверка роли пользователя
@@ -112,15 +132,16 @@ export default {
     async fetchStudents() {
       try {
         const response = await api.getStudents();
-        console.log('Students:', response.data); // Проверка данных студентов
         this.students = response.data.map((student) => ({
           ...student,
           isEditing: false,
           editedName: student.name,
+          editedUserId: student.userId,
           editedGroupId: student.groupId,
         }));
       } catch (error) {
         console.error('Failed to fetch students:', error);
+        alert('Failed to fetch students. Please try again later.');
       }
     },
 
@@ -132,11 +153,14 @@ export default {
           ...response.data,
           isEditing: false,
           editedName: response.data.name,
+          editedUserId: response.data.userId,
           editedGroupId: response.data.groupId,
         });
-        this.newStudent = { name: '', groupId: null }; // Очистка формы
+        this.newStudent = {name: '', userId: null, groupId: null}; // Очистка формы
+        alert('Student created successfully!');
       } catch (error) {
         console.error('Failed to create student:', error);
+        alert('Failed to create student. Please check the data and try again.');
       }
     },
 
@@ -150,14 +174,18 @@ export default {
       try {
         const updatedStudent = {
           name: student.editedName,
+          userId: student.editedUserId,
           groupId: student.editedGroupId,
         };
         await api.updateStudent(student.id, updatedStudent);
         student.name = updatedStudent.name;
+        student.userId = updatedStudent.userId;
         student.groupId = updatedStudent.groupId;
         student.isEditing = false;
+        alert('Student updated successfully!');
       } catch (error) {
         console.error('Failed to update student:', error);
+        alert('Failed to update student. Please try again later.');
       }
     },
 
@@ -168,15 +196,16 @@ export default {
         this.students = this.students.filter(
             (student) => student.id !== studentId
         );
+        alert('Student deleted successfully!');
       } catch (error) {
         console.error('Failed to delete student:', error);
+        alert('Failed to delete student. Please try again later.');
       }
     },
 
     // Проверка роли пользователя
     checkAdminRole() {
       const user = JSON.parse(localStorage.getItem('user'));
-      console.log('User:', user); // Проверка данных пользователя
       this.isAdmin = user && user.role === 'admin';
     },
   },
