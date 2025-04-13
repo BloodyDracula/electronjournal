@@ -19,19 +19,30 @@
       <div class="card-body">
         <h5 class="card-title mb-3">Фильтры</h5>
         <div class="row g-3">
+          <!-- Фильтр по группе (только для преподавателей и админов) -->
+          <div class="col-md-3" v-if="userRole !== 'student'">
+            <label for="groupFilter" class="form-label">Группа</label>
+            <select class="form-select" id="groupFilter" v-model="filters.groupId">
+              <option value="">Все группы</option>
+              <option v-for="group in groups" :key="group.id" :value="group.id">
+                {{ group.name }}
+              </option>
+            </select>
+          </div>
+
           <!-- Фильтр по студенту (только для преподавателей и админов) -->
-          <div class="col-md-4" v-if="userRole !== 'student'">
+          <div class="col-md-3" v-if="userRole !== 'student'">
             <label for="studentFilter" class="form-label">Студент</label>
             <select class="form-select" id="studentFilter" v-model="filters.studentId">
               <option value="">Все студенты</option>
-              <option v-for="student in students" :key="student.id" :value="student.id">
+              <option v-for="student in filteredStudents" :key="student.id" :value="student.id">
                 {{ student.lastName }} {{ student.firstName }} {{ student.middleName }}
               </option>
             </select>
           </div>
           
           <!-- Фильтр по предмету -->
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label for="subjectFilter" class="form-label">Предмет</label>
             <select class="form-select" id="subjectFilter" v-model="filters.subjectId">
               <option value="">Все предметы</option>
@@ -42,7 +53,7 @@
           </div>
           
           <!-- Фильтр по дате -->
-          <div class="col-md-4">
+          <div class="col-md-3">
             <label for="dateFilter" class="form-label">Период</label>
             <select class="form-select" id="dateFilter" v-model="filters.period">
               <option value="all">Весь период</option>
@@ -209,7 +220,8 @@ export default {
       filters: {
         studentId: this.$route.query.studentId || '',
         subjectId: '',
-        period: 'all'
+        period: 'all',
+        groupId: ''
       },
       gradeForm: {
         studentId: '',
@@ -235,6 +247,9 @@ export default {
     ...mapGetters('subjects', [
       'allSubjects'
     ]),
+    ...mapGetters('groups', [
+      'allGroups'
+    ]),
     ...mapGetters('grades', [
       'allGrades',
       'studentGrades',
@@ -243,6 +258,15 @@ export default {
     ]),
     students() {
       return this.getUsersByRole('student')
+    },
+    groups() {
+      return this.allGroups
+    },
+    filteredStudents() {
+      if (!this.filters.groupId) {
+        return this.students
+      }
+      return this.students.filter(student => student.groupId === parseInt(this.filters.groupId))
     },
     subjects() {
       return this.allSubjects
@@ -255,6 +279,13 @@ export default {
     },
     filteredGrades() {
       let grades = this.userRole === 'student' ? this.studentGrades : this.allGrades
+      
+      // Фильтр по группе
+      if (this.filters.groupId && this.userRole !== 'student') {
+        const studentsInGroup = this.students.filter(student => student.groupId === parseInt(this.filters.groupId))
+        const studentIds = studentsInGroup.map(student => student.id)
+        grades = grades.filter(grade => studentIds.includes(grade.studentId))
+      }
       
       // Фильтр по студенту
       if (this.filters.studentId) {
@@ -307,6 +338,9 @@ export default {
     ...mapActions('subjects', [
       'fetchSubjects'
     ]),
+    ...mapActions('groups', [
+      'fetchGroups'
+    ]),
     ...mapActions('grades', [
       'fetchGrades',
       'fetchStudentGrades',
@@ -332,6 +366,8 @@ export default {
         // Загрузка списка студентов (для преподавателей и админов)
         if (this.userRole !== 'student') {
           await this.fetchUsersByRole('student')
+          // Загрузка списка групп для фильтрации
+          await this.fetchGroups()
         }
         
         // Загрузка списка предметов

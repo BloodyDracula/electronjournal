@@ -11,6 +11,10 @@ const usersRoutes = require('./routes/users');
 const groupsRoutes = require('./routes/groups');
 const subjectsRoutes = require('./routes/subjects');
 const gradesRoutes = require('./routes/grades');
+const assignmentsRoutes = require('./routes/assignments');
+const submissionsRoutes = require('./routes/submissions');
+const lessonsRoutes = require('./routes/lessons');
+const attendanceRoutes = require('./routes/attendance');
 
 const app = express();
 
@@ -50,6 +54,10 @@ app.use('/api/users', usersRoutes);
 app.use('/api/groups', groupsRoutes);
 app.use('/api/subjects', subjectsRoutes);
 app.use('/api/grades', gradesRoutes);
+app.use('/api/assignments', assignmentsRoutes);
+app.use('/api/submissions', submissionsRoutes);
+app.use('/api/lessons', lessonsRoutes);
+app.use('/api/attendance', attendanceRoutes);
 
 // Обработка ошибок
 app.use((err, req, res, next) => {

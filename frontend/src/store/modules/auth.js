@@ -1,10 +1,12 @@
 import axios from 'axios'
+import router from '../../router'
 
 const API_URL = process.env.VUE_APP_API_URL || 'http://localhost:3000/api'
 
 const state = {
   token: localStorage.getItem('token') || null,
   user: JSON.parse(localStorage.getItem('user')) || null,
+  rememberMe: !!localStorage.getItem('token'),
   loading: false,
   error: null
 }
@@ -19,7 +21,7 @@ const getters = {
 
 const actions = {
   // Вход пользователя
-  async login({ commit }, { login, password }) {
+  async login({ commit }, { login, password, rememberMe = false }) {
     commit('setLoading', true)
     commit('clearError')
     
@@ -28,14 +30,20 @@ const actions = {
       
       const { token, user } = response.data
       
-      // Сохранение токена и пользователя в localStorage
-      localStorage.setItem('token', token)
-      localStorage.setItem('user', JSON.stringify(user))
+      // Сохранение токена и пользователя в localStorage только если выбрано "Запомнить меня"
+      if (rememberMe) {
+        localStorage.setItem('token', token)
+        localStorage.setItem('user', JSON.stringify(user))
+      } else {
+        // Удаляем данные из localStorage, если не выбрано "Запомнить меня"
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+      }
       
       // Установка токена в заголовки для всех последующих запросов
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
       
-      commit('setAuth', { token, user })
+      commit('setAuth', { token, user, rememberMe })
       return user
     } catch (error) {
       const errorMessage = error.response && error.response.data.message
@@ -50,7 +58,7 @@ const actions = {
   },
   
   // Выход пользователя
-  logout({ commit }) {
+  logout({ commit, state }) {
     // Удаление токена и пользователя из localStorage
     localStorage.removeItem('token')
     localStorage.removeItem('user')
@@ -59,6 +67,11 @@ const actions = {
     delete axios.defaults.headers.common['Authorization']
     
     commit('clearAuth')
+    
+    // Перенаправление на страницу авторизации
+    if (router) {
+      router.push('/login')
+    }
   },
   
   // Проверка текущего пользователя
@@ -106,9 +119,10 @@ const actions = {
 }
 
 const mutations = {
-  setAuth: (state, { token, user }) => {
+  setAuth: (state, { token, user, rememberMe }) => {
     state.token = token
     state.user = user
+    state.rememberMe = rememberMe
   },
   setUser: (state, user) => {
     state.user = user

@@ -9,6 +9,9 @@ import Students from '../views/Students.vue'
 import Groups from '../views/Groups.vue'
 import Subjects from '../views/Subjects.vue'
 import Grades from '../views/Grades.vue'
+import Assignments from '../views/Assignments.vue'
+import AssignmentDetail from '../views/AssignmentDetail.vue'
+import Attendance from '../views/Attendance.vue'
 
 const routes = [
   {
@@ -51,6 +54,24 @@ const routes = [
     path: '/grades',
     name: 'Grades',
     component: Grades,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/assignments',
+    name: 'Assignments',
+    component: Assignments,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/assignments/:id',
+    name: 'AssignmentDetail',
+    component: AssignmentDetail,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/attendance',
+    name: 'Attendance',
+    component: Attendance,
     meta: { requiresAuth: true }
   }
 ]

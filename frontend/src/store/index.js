@@ -4,6 +4,9 @@ import users from './modules/users'
 import groups from './modules/groups'
 import subjects from './modules/subjects'
 import grades from './modules/grades'
+import assignments from './modules/assignments'
+import lessons from './modules/lessons'
+import attendance from './modules/attendance'
 
 export default createStore({
   modules: {
@@ -11,6 +14,9 @@ export default createStore({
     users,
     groups,
     subjects,
-    grades
+    grades,
+    assignments,
+    lessons,
+    attendance
   }
 })

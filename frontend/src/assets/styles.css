@@ -1,0 +1,76 @@
+/* Стили в фирменной стилистике РАНХиГС */
+:root {
+  --ranepa-blue: #003a6b;
+  --ranepa-red: #e31e24;
+  --ranepa-light-blue: #4a90e2;
+  --ranepa-gray: #f5f5f5;
+  --ranepa-dark-gray: #333333;
+  --ranepa-white: #ffffff;
+}
+
+/* Переопределение цветов Bootstrap */
+.bg-primary {
+  background-color: var(--ranepa-blue) !important;
+}
+
+.btn-primary {
+  background-color: var(--ranepa-blue) !important;
+  border-color: var(--ranepa-blue) !important;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+  background-color: var(--ranepa-light-blue) !important;
+  border-color: var(--ranepa-light-blue) !important;
+}
+
+.btn-outline-light:hover {
+  color: var(--ranepa-blue) !important;
+}
+
+.card-header.bg-primary {
+  background-color: var(--ranepa-blue) !important;
+}
+
+/* Акцентные элементы */
+.accent-red {
+  color: var(--ranepa-red) !important;
+}
+
+.bg-accent-red {
+  background-color: var(--ranepa-red) !important;
+}
+
+/* Стили для навигации */
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+
+.navbar-brand img {
+  margin-right: 10px;
+  height: 40px;
+}
+
+/* Стили для карточек */
+.card {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  font-weight: bold;
+}
+
+/* Стили для кнопок */
+.btn {
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+/* Стили для форм */
+.form-control:focus {
+  border-color: var(--ranepa-light-blue);
+  box-shadow: 0 0 0 0.25rem rgba(0, 58, 107, 0.25);
+}

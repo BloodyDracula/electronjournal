@@ -17,7 +17,7 @@ module.exports = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret_key');
     
     // Получение пользователя из базы данных
-    const user = await User.findByPk(decoded.userId);
+    const user = await User.findByPk(decoded.id);
     
     if (!user) {
       return res.status(401).json({ message: 'Пользователь не найден' });

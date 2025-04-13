@@ -2,7 +2,10 @@
   <div class="app-container">
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
       <div class="container">
-        <router-link class="navbar-brand" to="/">Электронный журнал</router-link>
+        <router-link class="navbar-brand" to="/">
+          <img src="./assets/ranepa-logo.svg" alt="РАНХиГС" height="40">
+          <span class="ms-2">Электронный журнал</span>
+        </router-link>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -13,6 +16,12 @@
               <!-- Для всех авторизованных пользователей -->
               <li class="nav-item">
                 <router-link class="nav-link" to="/grades">Оценки</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/assignments">Задания</router-link>
+              </li>
+              <li class="nav-item">
+                <router-link class="nav-link" to="/attendance">Посещаемость</router-link>
               </li>
               
               <!-- Для администраторов и преподавателей -->
